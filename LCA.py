@@ -2,8 +2,6 @@ tree = [3,5,1,6,2,0,8,None,None,7,4] # right side of last level is 4 Nones, but 
 # according to example, trees are unsorted (in terms of values)
 
 def LCA(binarytree, node1, node2): # assume tree passed is sorted 2d array ran through levelsort
-    node1_ancestors = node1 # initialize with itself as an ancestor
-    node2_ancestors = node2
 
     def levelfinder(binarytree, node):
         i = 1
@@ -21,16 +19,23 @@ def LCA(binarytree, node1, node2): # assume tree passed is sorted 2d array ran t
                 return i
             i += 1
 
-    node1_level = levelfinder(binarytree, node1)
-    node1_index = index(binarytree, node1, node1_level)
-    node2_level = levelfinder(binarytree, node2)
-    node2_index = index(binarytree, node2, node2_level)
-
     def ancestors(binarytree, nodeindex, nodelevel):
         ancestorlist = []
         while nodelevel > 0:
             nodelevel -= 1
             ancestorlist.append(binarytree[nodelevel[(nodeindex//2 + nodeindex%2)]])
+
+    node1_level = levelfinder(binarytree, node1)
+    node1_index = index(binarytree, node1, node1_level)
+    node2_level = levelfinder(binarytree, node2)
+    node2_index = index(binarytree, node2, node2_level)
+    node1_ancestors=ancestors(binarytree, node1_index, node1_level)
+    node1_ancestors.append(node1)
+    node2_ancestors=ancestors(binarytree, node2_index, node2_level)
+    node2_ancestors.append(node2)
+
+
+
     # goal: LCA
         # need: full ancestor lists
             # need: descendant index
@@ -54,4 +59,3 @@ def levelsort(binarytree):
 
 levelsort(tree)
 # print(LCA(tree))
-
