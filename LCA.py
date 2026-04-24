@@ -27,8 +27,10 @@ def LCA(binarytree, node1, node2): # assume tree passed is sorted 2d array ran t
     node2_index = index(binarytree, node2, node2_level)
 
     def ancestors(binarytree, nodeindex, nodelevel):
+        ancestorlist = []
         while nodelevel > 0:
-
+            nodelevel -= 1
+            ancestorlist.append(binarytree[nodelevel[nodeindex/]])
     # goal: LCA
         # need: full ancestor lists
             # need: descendant index
