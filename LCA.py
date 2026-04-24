@@ -1,66 +1,80 @@
 import math
 
-tree = [3,5,1,6,2,0,8,None,None,7,4] # right side of last level is 4 Nones, but unnecessary
-# according to example, trees are unsorted (in terms of values)
+tree = [3, 5, 1, 6, 2, 0, 8, None, None, 7, 4] # right side of last level is 4 nones, but unnecessary
+#  according to example, trees are unsorted (in terms of value)
 
-def LCA(binarytree, node1, node2): # assume tree passed is sorted 2d array ran through levelsort
 
+def LCA(binarytree, node1, node2): # assume tree passed is 2d sorted array ran through levelsort
+    # also assume no duplicate nodes
     def levelfinder(binarytree, node):
-        i = 1
-        for level in binarytree:
+        for i, level in enumerate(binarytree):  # 0-based
             if node in level:
                 return i
-            i += 1
-        return None # if node not in tree
-
+        return None
 
     def index(binarytree, node, level):
-        i = 1
-        for nodes in binarytree[level-1]:
-            if node == nodes:
+        for i, val in enumerate(binarytree[level]):  # 0-based
+            if node == val:
                 return i
-            i += 1
+        return None
 
     def ancestors(binarytree, nodeindex, nodelevel):
-        ancestorlist = []
-        while nodelevel > 0:
-            nodelevel -= 1
-            ancestorlist.append(binarytree[nodelevel][(math.ceil(nodeindex/2))])
-            nodeindex = math.ceil(nodeindex/2)
-        return ancestorlist
+        global_index = (2 ** nodelevel - 1) + nodeindex
+
+        path = []
+
+        while global_index >= 0:
+            # convert global index → (level, index)
+            level = int(math.floor(math.log2(global_index + 1)))
+            level_start = 2 ** level - 1
+            index = global_index - level_start
+
+            path.append(binarytree[level][index])
+
+            if global_index == 0:
+                break
+
+            global_index = (global_index - 1) // 2
+
+        path.reverse()
+        return path
+
+    def LCACalc(node1_ancestors, node2_ancestors):
+        lca = None
+        for a, b in zip(node1_ancestors, node2_ancestors):
+            if a == b:
+                lca = a
+            else:
+                break
+        return lca
 
     node1_level = levelfinder(binarytree, node1)
     node1_index = index(binarytree, node1, node1_level)
+
     node2_level = levelfinder(binarytree, node2)
     node2_index = index(binarytree, node2, node2_level)
-    node1_ancestors=ancestors(binarytree, node1_index, node1_level)
-    node1_ancestors.append(node1)
-    node2_ancestors=ancestors(binarytree, node2_index, node2_level)
-    node2_ancestors.append(node2)
 
-    return node1_ancestors, node2_ancestors
+    node1_ancestors = ancestors(binarytree, node1_index, node1_level)
+    node2_ancestors = ancestors(binarytree, node2_index, node2_level)
+    lowestCommon = LCACalc(node1_ancestors, node2_ancestors)
 
-
-    # goal: LCA
-        # need: full ancestor lists
-            # need: descendant index
-
-
-    # also according to example, will assume no duplicate nodes
-    # level with 4 sublevel 8: (1,2) (3,4) (5,6) (7,8)
-    # check if ancestor through if index == ancestor index *2 or ancestor index *2 -1
+    return lowestCommon
 
 
 def levelsort(binarytree):
     levelsize = 1
-    sortedtree = [] #2d array
-    while binarytree: # is not empty
-        temp = binarytree[0:levelsize]
-        sortedtree.append(temp)
-        for node in binarytree[0:levelsize]:
-            binarytree.remove(node)
+    sortedtree = []
+
+    i = 0
+    n = len(binarytree)
+
+    while i < n:
+        sortedtree.append(binarytree[i:i + levelsize])
+        i += levelsize
         levelsize *= 2
+
     return sortedtree
 
+
 tree = levelsort(tree)
-print(LCA(tree,5,1))
+print(LCA(tree, 5, 4))
