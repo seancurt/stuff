@@ -24,6 +24,8 @@ def LCA(binarytree, node1, node2): # assume tree passed is sorted 2d array ran t
         while nodelevel > 0:
             nodelevel -= 1
             ancestorlist.append(binarytree[nodelevel[(nodeindex//2 + nodeindex%2)]])
+            nodeindex = nodeindex//2 + nodeindex%2
+        return ancestorlist
 
     node1_level = levelfinder(binarytree, node1)
     node1_index = index(binarytree, node1, node1_level)
@@ -34,6 +36,7 @@ def LCA(binarytree, node1, node2): # assume tree passed is sorted 2d array ran t
     node2_ancestors=ancestors(binarytree, node2_index, node2_level)
     node2_ancestors.append(node2)
 
+    return node1_ancestors, node2_ancestors
 
 
     # goal: LCA
@@ -58,4 +61,4 @@ def levelsort(binarytree):
     return sortedtree
 
 levelsort(tree)
-# print(LCA(tree))
+print(LCA(tree,5,1))
