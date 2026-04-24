@@ -26,6 +26,8 @@ def LCA(binarytree, node1, node2): # assume tree passed is sorted 2d array ran t
     node2_level = levelfinder(binarytree, node2)
     node2_index = index(binarytree, node2, node2_level)
 
+    def ancestors(binarytree, nodeindex, nodelevel):
+        while nodelevel > 0:
 
     # goal: LCA
         # need: full ancestor lists
